@@ -3,34 +3,25 @@ const state = require('./state.js')
 
 function robot() {
   const content = {
-    maximumSentences: 7,
-    useFecthContentFromWikipediaAlgorithmia: true
+    maximumSentences: 7
   }
 
   content.searchTerm = askAndReturnSearchTerm()
   content.prefix = askAndReturnPrefix()
-  content.lang = askAndReturnLanguage()
   state.save(content)
 
   function askAndReturnSearchTerm() {
-    return readline.question('Insira um termo para a Wikipedia: ')
+    return readline.question('Type a Wikipedia search term: ')
   }
 
   function askAndReturnPrefix() {
-    const prefixes = ['Quem e', 'O que e', 'A historia de ']
-    const selectedPrefixIndex = readline.keyInSelect(prefixes, 'Escolha uma opção: ')
+    const prefixes = ['Who is', 'What is', 'The history of']
+    const selectedPrefixIndex = readline.keyInSelect(prefixes, 'Choose one option: ')
     const selectedPrefixText = prefixes[selectedPrefixIndex]
 
     return selectedPrefixText
   }
 
-  function askAndReturnLanguage(){
-    return 'pt'
-		const language = ['pt','en', 'es', 'fr']
-		const selectedLangIndex = readline.keyInSelect(language,'Escolha o Idioma: ')
-		const selectedLangText = language[selectedLangIndex]
-		return selectedLangText
-  }
 }
 
 module.exports = robot
