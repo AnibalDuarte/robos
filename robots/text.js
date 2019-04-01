@@ -13,8 +13,8 @@ const nlu = new NaturalLanguageUnderstandingV1({
 
 const state = require('./state.js')
 
-async function robot() {
-  const content = state.load()
+async function robot(slug) {
+  const content = state.load(slug)
 
   await fetchContentFromWikipedia(content)
   sanitizeContent(content)
@@ -23,11 +23,16 @@ async function robot() {
   await fetchKeywordsOfAllSentences(content)
 
   state.save(content)
+  return content
+  
 
   async function fetchContentFromWikipedia(content) {
     const algorithmiaAuthenticated = algorithmia(algorithmiaApiKey)
     const wikipediaAlgorithm = algorithmiaAuthenticated.algo('web/WikipediaParser/0.1.2')
-    const wikipediaResponse = await wikipediaAlgorithm.pipe(content.searchTerm)
+    const wikipediaResponse = await wikipediaAlgorithm.pipe({
+      "articleName": content.searchTerm,
+      "lang": content.lang
+    })
     const wikipediaContent = wikipediaResponse.get()
 
     content.sourceContentOriginal = wikipediaContent.content
@@ -90,6 +95,7 @@ async function robot() {
         }
       }, (error, response) => {
         if (error) {
+          console.log(reject)
           throw error
         }
 
