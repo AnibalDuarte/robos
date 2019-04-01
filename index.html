@@ -8,10 +8,11 @@
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
+      form { background: #777; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width:80%; }
+      form select { border: 0; padding: 10px; }
+      form button { background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; padding-bottom:25px; margin-bottom:25px; }
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
     </style>
@@ -19,16 +20,32 @@
   <body>
     <ul id="messages"></ul>
     <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
+      <table>
+        <tr>
+          <td style="width:50%;">Nome: <input id="nome" autocomplete="off" /></td>
+          <td>Contexto: <select id="contexto">
+            <option value="quem é">Quem é</option>
+            <option value="o que">O que é</option>
+            <option value="historia">História de</option>
+          </select></td>
+          <td>Quantidade: <select id="quantidade">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+          </select></td>
+          <td><button>Send</button></td>
+        </tr>
+      </table>
     </form>
   </body>
 </html>
-    
-
-
-
-
-
 
 <script>
     let socket = io();
@@ -37,12 +54,13 @@
         var socket = io();
         $('form').submit(function(e){
             e.preventDefault(); // prevents page reloading
-            socket.emit('chat message', $('#m').val());
+            socket.emit('chat message', $('#contexto').val()+'|'+$('#nome').val()+'|'+$('#quantidade').val());
             $('#m').val('');
             return false;
         });
         socket.on('chat message', function(msg){
-            $('#messages').append($('<li>').text(msg));
+            $('#messages').append('<li>'+msg+'</li>');
+            $("html, body").animate({ scrollTop: $(document).height() }, 1000);
         });
     });
 </script>

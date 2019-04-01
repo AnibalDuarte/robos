@@ -1,12 +1,15 @@
 var app = require('express')();
+var express = require('express');
+var path = require('path');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+
 
 const robots = {
   input: require('./robots/input.js'),
   text: require('./robots/text.js'),
   state: require('./robots/state.js'),
-  //image: require('./robots/image.js')
+  image: require('./robots/image.js')
 }
 
 
@@ -14,39 +17,56 @@ const slugify = require('slugify')
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
+}).use(express.static(path.join(__dirname, '/robots')));
+
+app.get('/minions.gif', function(req, res){
+  res.sendFile(__dirname + '/minions.gif');
 });
 
+
 io.on('connection', function(socket){
-  console.log('a user connected');
-  socket.emit('chat message', "Insira os dados da busca separados por vírgulas desta forma: CONTEXTO,QUEM,QUANTIDADE,IDIOMA(pt/es/en)<br><br>Lembre-se: a busca tem que ser no mesmo idioma solicitado!");
+  socket.emit('chat message', "Seja bem vindo ao BOT de buscas! Insira o que quer saber que eu encontro para você!");
 
   socket.on('disconnect', function(){
-    console.log('user disconnected');
+    
   });
-  socket.on('chat message', function(msg){
-    let infos = msg.split(',')
+  socket.on('chat message', function(m){
+    let infos = m.split('|')
     /*
     Parametros de MSG:
     0 - Contexto
     1 - O que / Quem
     2 - Quantidade
-    3 - Idioma
     */
     const slug = slugify(infos[0]+'_'+infos[1])
     
-    socket.emit('chat message', 'Buscando '+infos[2]+' resultados em '+infos[3]+' para '+infos[0]+' '+infos[1]);
 
-    robots.input(slug,infos)
+    socket.emit('chat message', 'Buscando '+infos[2]+' resultados para '+infos[0]+' '+infos[1])
+
 
     socket.emit('chat message','Recoste a cadeira e aguarde enquanto os Minions buscam seu conteúdo...<br><img src="/minions.gif"/>')
-
-    const results = await robots.text(slug)
-    console.log(results);
-    socket.emit('chat message', JSON.stringify(results));
     
-    //await robots.image(slug,infos)
+    start(slug,infos)
 
   });
+
+  async function start(slug,infos) {
+    app.use(express.static(path.join(__dirname, '/robots/'+slug)));
+    robots.input(slug,infos)
+    const texts = await robots.text(slug)
+    socket.emit('chat message','Encontramos várias coisas! Espere um minuto, vamos buscar algumas imagens legais...')
+    await robots.image(slug,infos)
+    socket.emit('chat message','Pronto! Aqui estão os seus resultados:')
+    let contador = 1;
+    for (var i = 0, len = texts.sentences.length; i < len; i++) {
+      contador = i + 1;
+      socket.emit('chat message', texts.sentences[i]['text']);
+      socket.emit('chat message', '<img src="/'+slug+'/'+i+'-original.png" style="width:auto;height:400px;"/>');
+    }
+    
+
+    socket.emit('chat message', 'Este é o fim, obrigado e tenha um bom dia!');
+  }
   
 });
 

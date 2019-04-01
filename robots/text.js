@@ -31,7 +31,7 @@ async function robot(slug) {
     const wikipediaAlgorithm = algorithmiaAuthenticated.algo('web/WikipediaParser/0.1.2')
     const wikipediaResponse = await wikipediaAlgorithm.pipe({
       "articleName": content.searchTerm,
-      "lang": content.lang
+      "lang": 'pt'
     })
     const wikipediaContent = wikipediaResponse.get()
 
@@ -95,7 +95,7 @@ async function robot(slug) {
         }
       }, (error, response) => {
         if (error) {
-          console.log(reject)
+          //console.log(reject)
           throw error
         }
 

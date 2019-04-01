@@ -67,4 +67,8 @@ content.json
 
 content/*.png
 content/*.jpg
+
+robots/*.png
+robots/*.jpg
+
 .DS_Store

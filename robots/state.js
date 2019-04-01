@@ -17,12 +17,12 @@ function load(slug) {
 
 function mkd(dir){
   if(!fs.exists(dir)) {
-    console.log('Criando diretorio '+dir)
+    //console.log('Criando diretorio '+dir)
     fs.mkdir(__dirname +  '/'+dir, { recursive: true }, (err) => {
-      console.log(err)
+      //console.log(err)
     });
   } else {
-      console.log('Diretorio '+dir+' ja existe')    
+      //console.log('Diretorio '+dir+' ja existe')    
   }
   
 }

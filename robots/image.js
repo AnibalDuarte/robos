@@ -11,11 +11,13 @@ async function robot(slug) {
 
   await fetchImagesOfAllSentences(content)
   await downloadAllImages(content)
-  await createAllSentenceImages(content)
-  await convertAllImages(content)
-  await createYouTubeThumbnail()
+  //await createAllSentenceImages(content)
+  //await convertAllImages(content)
+  //await createYouTubeThumbnail()
 
   state.save(content)
+
+  return(content)
 
   async function fetchImagesOfAllSentences(content) {
     for (const sentence of content.sentences) {
@@ -58,10 +60,10 @@ async function robot(slug) {
 
           await downloadAndSave(imageUrl, `${sentenceIndex}-original.png`)
           content.downloadedImages.push(imageUrl)
-          console.log(`> [${sentenceIndex}][${imageIndex}] Baixou imagem com sucesso: ${imageUrl}`)
+          //console.log(`> [${sentenceIndex}][${imageIndex}] Baixou imagem com sucesso: ${imageUrl}`)
           break
         } catch(error) {
-          console.log(`> [${sentenceIndex}][${imageIndex}] Erro ao baixar (${imageUrl}): ${error}`)
+          //console.log(`> [${sentenceIndex}][${imageIndex}] Erro ao baixar (${imageUrl}): ${error}`)
         }
       }
     }
@@ -113,7 +115,7 @@ async function robot(slug) {
             return reject(error)
           }
 
-          console.log(`> Image converted: ${inputFile}`)
+          //console.log(`> Image converted: ${inputFile}`)
           resolve()
         })
 
@@ -128,7 +130,7 @@ async function robot(slug) {
 
   async function createSentenceImage(sentenceIndex, sentenceText, slug) {
     return new Promise((resolve, reject) => {
-      const outputFile = `./${slug}/${sentenceIndex}-sentence.png`
+      const outputFile = __dirname +  `./${slug}/${sentenceIndex}-sentence.png`
 
       const templateSettings = {
         0: {
@@ -150,7 +152,7 @@ async function robot(slug) {
             return reject(error)
           }
 
-          console.log(`> Sentence created: ${outputFile}`)
+          //console.log(`> Sentence created: ${outputFile}`)
           resolve()
         })
     })
@@ -165,7 +167,7 @@ async function robot(slug) {
             return reject(error)
           }
 
-          console.log('> Creating YouTube thumbnail')
+          //console.log('> Creating YouTube thumbnail')
           resolve()
         })
     })
